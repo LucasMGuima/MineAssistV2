@@ -36,6 +36,10 @@ def creat_window(_width: int, _height: int) -> None:
                     dpg.add_table_column(label=lb.tb_col_overWord)
                     dpg.add_table_column(label=lb.tb_col_nether)
                     #TODO Chamar função de ler as coordenadas de dado arquivo
+                    with dpg.table_row():
+                        dpg.add_text("Vila")
+                        dpg.add_text("X:80 Z:80")
+                        dpg.add_text("X:10 Z:10")
         
             #Edição
             with dpg.child_window(label=lb.editCord, tag=tg.editWindow, autosize_x=True, autosize_y=True):
@@ -50,6 +54,7 @@ def creat_window(_width: int, _height: int) -> None:
                     with dpg.group(horizontal=True):
                         dpg.add_text("Cord Z:")
                         dpg.add_input_int(tag=tg.inpCordZ, step=0)
+                dpg.add_button(label=lb.btn_adicionar)
 
 
     dpg.create_viewport(title="Mine Assistent", width=_width, height=_height)

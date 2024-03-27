@@ -17,3 +17,4 @@ class labels():
     novo = "Novo"
     editar = "Editar"
     trocar = "Trocar"
+    btn_adicionar = "Adicionar"
