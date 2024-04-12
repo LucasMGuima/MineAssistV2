@@ -2,6 +2,8 @@ class tags():
     primareWindow = "w_primare"
     coordWindow = "w_coord"
     editWindow = "w_editCoord"
+    saveWindow = "w_save"
+    novoSave = "w_novoSave"
     inpNome = "inp_t_nome"
     inpCordX = "inp_d_cordX"
     inpCordZ = "inp_d_cordZ"
@@ -9,6 +11,8 @@ class tags():
     attCordX = "att_d_cordX"
     attCordZ = "att_d_cordZ"
     valorAntigo = "att_valor_antigo"
+    save = "sel_save"
+    novoSaveNome = "inp_t_nomeNovoSave"
 
 class labels():
     cords = "Coordenadas"
@@ -23,3 +27,5 @@ class labels():
     trocar = "Trocar"
     btn_adicionar = "Adicionar"
     btn_atualizar = "Atualizar"
+    novoSave = "Novo Save"
+    cancelar = "Cancelar"

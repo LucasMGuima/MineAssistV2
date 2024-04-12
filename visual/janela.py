@@ -11,7 +11,7 @@ def clb_addCord():
     __atualizar_cords() if resp else print("Erro")
 
 def clb_atualizar():
-    resp = fun.atualizarCoordenada()
+    resp = fun.atualizarCoordenada(dpg.get_value(tg.save))
     __atualizar_cords() if resp else print("Erro")
 
 def clb_selecionavel(sender, app_data, user_data):
@@ -26,17 +26,27 @@ def clb_selecionavel(sender, app_data, user_data):
     dpg.set_value(tg.attCordZ, cord_z)
     dpg.set_value(tg.valorAntigo, f"{nome},{cord_x},{cord_z}")
 
-#janelas
+#Janelas
 def __window_config() -> None:
     pass
 
+def __window_save() -> None:
+    dpg.configure_item(tg.saveWindow, show=True)
+    pass
+
+def __novo_save() -> None:
+    dpg.configure_item(tg.novoSave, show=True, pos=dpg.get_mouse_pos())
+    pass
+#Funcoes
 def __atualizar_cords() -> None:
     for item in dpg.get_item_children(tg.coordWindow)[1]:
         #Limpa a tabela
         dpg.delete_item(item)
 
     #Atualiza a tabela
-    cords = fun.carregarCordenadas()
+    cords = fun.carregarCordenadas(dpg.get_value(tg.save))
+    if cords == False: return
+
     for cord in cords:
         with dpg.table_row(parent=tg.coordWindow):
             #Linha selecionavel
@@ -44,6 +54,9 @@ def __atualizar_cords() -> None:
             dpg.add_selectable(label=f"{cord[1]}",callback=clb_selecionavel, user_data=(cord[0], cord[1]), span_columns=True)
             dpg.add_selectable(label=f"{cord[2]}",callback=clb_selecionavel, user_data=(cord[0], cord[1]), span_columns=True)
 
+def __listar_saves() -> list:
+    resp = fun.listar_saves()
+    return resp
 #Janela principal
 def creat_window(_width: int, _height: int) -> None:
     dpg.create_context()
@@ -52,10 +65,7 @@ def creat_window(_width: int, _height: int) -> None:
     with dpg.window(tag=tg.primareWindow):
         #Cria a barra de ferramentas
         with dpg.menu_bar():
-            with dpg.menu(label=lb.save):
-                dpg.add_menu_item(label=lb.trocar)
-                dpg.add_menu_item(label=lb.novo)
-                dpg.add_menu_item(label=lb.editar)
+            dpg.add_menu_item(label=lb.save, callback=__window_save)
             #Configurações
             dpg.add_menu_item(label=lb.config, callback=__window_config)
         
@@ -100,6 +110,24 @@ def creat_window(_width: int, _height: int) -> None:
                         dpg.add_input_int(tag=tg.attCordZ, step=0)
                     dpg.add_button(label=lb.btn_atualizar, callback=clb_atualizar)    
 
+    #Cria janela de PopUp
+    with dpg.window(label=lb.save, tag=tg.saveWindow, show=False, width=200):
+        with dpg.group(horizontal=True):
+            dpg.add_text("Saves: ")
+            lst_saves = __listar_saves()
+            dpg.add_combo(items=lst_saves, tag=tg.save)
+        with dpg.group(horizontal=True):
+            dpg.add_button(label=lb.trocar, callback=__atualizar_cords)
+            dpg.add_button(label=lb.novo, callback=__novo_save)
+            dpg.add_button(label=lb.editar)
+
+    with dpg.window(label=lb.novoSave, tag=tg.novoSave, show=False, width=200):
+        with dpg.group(horizontal=True):
+            dpg.add_text("Nome: ")
+            dpg.add_input_text(tag=tg.novoSaveNome)
+        with dpg.group(horizontal=True):
+            dpg.add_button(label=lb.novo)
+            dpg.add_button(label=lb.cancelar)
 
     dpg.create_viewport(title="Mine Assistent", width=_width, height=_height)
     dpg.setup_dearpygui()
