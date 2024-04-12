@@ -1,4 +1,6 @@
 import dearpygui.dearpygui as dpg
+from utils import refs as r
+import csv
 
 def adicionarCordenada() -> bool:
     """
@@ -8,7 +10,6 @@ def adicionarCordenada() -> bool:
             True -> Salvo a nova coordenada.
             False -> Ocorreu algum erro.
     """
-    from utils import refs as r
 
     nome = dpg.get_value(r.tags.inpNome)
     cord_x = int(dpg.get_value(r.tags.inpCordX))
@@ -25,13 +26,48 @@ def adicionarCordenada() -> bool:
     except:
         return False
 
+def atualizarCoordenada(save:str = "teste") -> bool:
+    #Valores novos
+    att_nome = dpg.get_value(r.tags.attNome)
+    att_cordX = dpg.get_value(r.tags.attCordX)
+    att_cordZ = dpg.get_value(r.tags.attCordZ)
+    #Valores antigos
+    old_val = dpg.get_value(r.tags.valorAntigo).split(',')
+    old_nome = old_val[0]
+    old_cordX = old_val[1]
+    old_cordZ = old_val[2]
+
+    try:
+        with open(f'./saves/{save}.csv', newline='\n', mode='r') as file:
+            reader = csv.reader(file, delimiter=',')
+            att_linhas = []
+            for linha in reader:
+                if linha[0] == old_nome:
+                    linha[0] = att_nome
+                    linha[1] = att_cordX
+                    linha[2] = att_cordZ
+                att_linhas.append(linha)
+            
+        with open(f'./saves/{save}.csv', newline='\n', mode='w') as file:
+            writer = csv.writer(file, delimiter=',')
+            writer.writerows(att_linhas)
+        
+        #Limpa os campos
+        dpg.set_value(r.tags.attNome, '')
+        dpg.set_value(r.tags.valorAntigo, '')
+        dpg.set_value(r.tags.attCordX, 0)
+        dpg.set_value(r.tags.attCordZ, 0)
+
+        return True
+    except:
+        return False
 
 def __escreverCoordenada(nome:str, cord_x:int, cord_z:int, save:str = "teste") -> bool:
-    import csv
-
-    with open(f'./saves/{save}.csv', newline='\n', mode="+a") as csvfile:
+    with open(f'./saves/{save}.csv', newline='\n', mode="a+") as csvfile:
+        reader = csv.reader(csvfile, delimiter=',')
         writer = csv.writer(csvfile, delimiter=',')
-        writer.writerow([nome, cord_x, cord_z])
+        for linha in reader:
+            return False if linha[0] == nome else writer.writerow([nome, cord_x, cord_z])
 
 def carregarCordenadas(save:str ="teste") -> list:
     """
@@ -40,8 +76,6 @@ def carregarCordenadas(save:str ="teste") -> list:
         Return:
             lista contendo as coordenadas.
     """
-    import csv
-
     cords = []
 
     with open(f'./saves/{save}.csv', newline='\n') as csvfile:

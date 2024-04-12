@@ -5,6 +5,10 @@ class tags():
     inpNome = "inp_t_nome"
     inpCordX = "inp_d_cordX"
     inpCordZ = "inp_d_cordZ"
+    attNome = "att_t_nome"
+    attCordX = "att_d_cordX"
+    attCordZ = "att_d_cordZ"
+    valorAntigo = "att_valor_antigo"
 
 class labels():
     cords = "Coordenadas"
@@ -18,3 +22,4 @@ class labels():
     editar = "Editar"
     trocar = "Trocar"
     btn_adicionar = "Adicionar"
+    btn_atualizar = "Atualizar"

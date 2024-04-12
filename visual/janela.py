@@ -6,9 +6,25 @@ tg = refs.tags
 lb = refs.labels
 
 #Callbacks
-def callback_addCord():
+def clb_addCord():
     resp = fun.adicionarCordenada()
     __atualizar_cords() if resp else print("Erro")
+
+def clb_atualizar():
+    resp = fun.atualizarCoordenada()
+    __atualizar_cords() if resp else print("Erro")
+
+def clb_selecionavel(sender, app_data, user_data):
+    nome = user_data[0]
+    
+    cord = user_data[1].split()
+    cord_x = int(cord[0].split(":")[1])
+    cord_z = int(cord[1].split(":")[1])
+
+    dpg.set_value(tg.attNome, nome)
+    dpg.set_value(tg.attCordX, cord_x)
+    dpg.set_value(tg.attCordZ, cord_z)
+    dpg.set_value(tg.valorAntigo, f"{nome},{cord_x},{cord_z}")
 
 #janelas
 def __window_config() -> None:
@@ -23,11 +39,11 @@ def __atualizar_cords() -> None:
     cords = fun.carregarCordenadas()
     for cord in cords:
         with dpg.table_row(parent=tg.coordWindow):
-            dpg.add_text(cord[0])
-            dpg.add_text(cord[1])
-            dpg.add_text(cord[2])
+            #Linha selecionavel
+            dpg.add_selectable(label=f"{cord[0]}",callback=clb_selecionavel, user_data=(cord[0], cord[1]), span_columns=True)
+            dpg.add_selectable(label=f"{cord[1]}",callback=clb_selecionavel, user_data=(cord[0], cord[1]), span_columns=True)
+            dpg.add_selectable(label=f"{cord[2]}",callback=clb_selecionavel, user_data=(cord[0], cord[1]), span_columns=True)
 
-    
 #Janela principal
 def creat_window(_width: int, _height: int) -> None:
     dpg.create_context()
@@ -48,22 +64,17 @@ def creat_window(_width: int, _height: int) -> None:
             #Tabela
             with dpg.group():
                 #-- Tabela de coordenadas
-                with dpg.table(tag=tg.coordWindow, header_row=True, resizable=True,  policy=dpg.mvTable_SizingStretchProp,borders_outerH=True, borders_innerV=True, borders_innerH=True, borders_outerV=True):
+                with dpg.table(tag=tg.coordWindow, header_row=True, resizable=False,borders_outerH=True, borders_innerV=True, borders_innerH=True, borders_outerV=True):
                     dpg.add_table_column(label=lb.tb_col_nome)
                     dpg.add_table_column(label=lb.tb_col_overWord)
                     dpg.add_table_column(label=lb.tb_col_nether)
                     
-                    cords = fun.carregarCordenadas()
-                    for cord in cords:
-                        with dpg.table_row():
-                            dpg.add_text(cord[0])
-                            dpg.add_text(cord[1])
-                            dpg.add_text(cord[2])
+                    __atualizar_cords()
         
             #Edição
             with dpg.child_window(label=lb.editCord, tag=tg.editWindow, autosize_x=True, autosize_y=True):
                 with dpg.group():
-                    dpg.add_text("--Editor--")
+                    dpg.add_text("--Nova Coordenada--")
                     with dpg.group(horizontal=True):
                         dpg.add_text("Nome")
                         dpg.add_input_text(tag=tg.inpNome)
@@ -73,7 +84,21 @@ def creat_window(_width: int, _height: int) -> None:
                     with dpg.group(horizontal=True):
                         dpg.add_text("Cord Z:")
                         dpg.add_input_int(tag=tg.inpCordZ, step=0)
-                dpg.add_button(label=lb.btn_adicionar, callback=callback_addCord)
+                    dpg.add_button(label=lb.btn_adicionar, callback=clb_addCord)
+                with dpg.group():
+                    dpg.add_text("--Editar Coordenada--")
+                    #Salvar valores antigos
+                    dpg.add_text(tag=tg.valorAntigo, show=False)
+                    with dpg.group(horizontal=True):
+                        dpg.add_text("Nome")
+                        dpg.add_input_text(tag=tg.attNome)
+                    with dpg.group(horizontal=True):
+                        dpg.add_text("Cord X:")
+                        dpg.add_input_int(tag=tg.attCordX, step=0)
+                    with dpg.group(horizontal=True):
+                        dpg.add_text("Cord Z:")
+                        dpg.add_input_int(tag=tg.attCordZ, step=0)
+                    dpg.add_button(label=lb.btn_atualizar, callback=clb_atualizar)    
 
 
     dpg.create_viewport(title="Mine Assistent", width=_width, height=_height)
