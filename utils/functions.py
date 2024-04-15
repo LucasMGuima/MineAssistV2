@@ -1,5 +1,6 @@
 import dearpygui.dearpygui as dpg
 from utils import refs as r
+import os
 import csv
 
 def adicionarCordenada() -> bool:
@@ -83,6 +84,7 @@ def carregarCordenadas(save:str) -> list:
         Return:
             lista contendo as coordenadas.
     """
+    import glob
     cords = []
     try:
         with open(f'./saves/{save}.csv', newline='\n') as csvfile:
@@ -103,7 +105,12 @@ def carregarCordenadas(save:str) -> list:
 
         return cords
     except:
-        return False
+        lst_files = glob.glob('./saves/*.csv')
+        temp = max(lst_files, key=os.path.getatime)
+        temp = temp.replace('/', '\\').split('\\')[2]
+        arq_maisNovo = temp.replace('.csv', '')
+        return carregarCordenadas(arq_maisNovo)
+        
 
 def listar_saves() -> list:
     from os import listdir
@@ -113,3 +120,8 @@ def listar_saves() -> list:
         save = item.split('.')[0]
         saves.append(save)
     return saves
+
+def criarNovoSave():
+    nome = dpg.get_value(r.tags.novoSaveNome)
+    file = open(f'./saves/{nome}.csv', newline='\n', mode="w")
+    file.close()

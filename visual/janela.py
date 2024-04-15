@@ -26,6 +26,11 @@ def clb_selecionavel(sender, app_data, user_data):
     dpg.set_value(tg.attCordZ, cord_z)
     dpg.set_value(tg.valorAntigo, f"{nome},{cord_x},{cord_z}")
 
+def clb_novoSave():
+    fun.criarNovoSave()
+    lst = __listar_saves()
+    dpg.configure_item(tg.save, items=lst)
+    dpg.configure_item(tg.novoSave, show=False)
 #Janelas
 def __window_config() -> None:
     pass
@@ -36,7 +41,6 @@ def __window_save() -> None:
 
 def __novo_save() -> None:
     dpg.configure_item(tg.novoSave, show=True, pos=dpg.get_mouse_pos())
-    pass
 #Funcoes
 def __atualizar_cords() -> None:
     for item in dpg.get_item_children(tg.coordWindow)[1]:
@@ -111,6 +115,7 @@ def creat_window(_width: int, _height: int) -> None:
                     dpg.add_button(label=lb.btn_atualizar, callback=clb_atualizar)    
 
     #Cria janela de PopUp
+    #Saves
     with dpg.window(label=lb.save, tag=tg.saveWindow, show=False, width=200):
         with dpg.group(horizontal=True):
             dpg.add_text("Saves: ")
@@ -119,14 +124,15 @@ def creat_window(_width: int, _height: int) -> None:
         with dpg.group(horizontal=True):
             dpg.add_button(label=lb.trocar, callback=__atualizar_cords)
             dpg.add_button(label=lb.novo, callback=__novo_save)
-            dpg.add_button(label=lb.editar)
+            #dpg.add_button(label=lb.editar)
 
+    #Novo save
     with dpg.window(label=lb.novoSave, tag=tg.novoSave, show=False, width=200):
         with dpg.group(horizontal=True):
             dpg.add_text("Nome: ")
             dpg.add_input_text(tag=tg.novoSaveNome)
         with dpg.group(horizontal=True):
-            dpg.add_button(label=lb.novo)
+            dpg.add_button(label=lb.novo, callback=clb_novoSave)
             dpg.add_button(label=lb.cancelar)
 
     dpg.create_viewport(title="Mine Assistent", width=_width, height=_height)
