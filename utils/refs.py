@@ -23,7 +23,7 @@ class labels():
     tb_col_nether = "Nether"
     save = "Save"
     novo = "Novo"
-    editar = "Editar"
+    remover = "Remover"
     trocar = "Trocar"
     btn_adicionar = "Adicionar"
     btn_atualizar = "Atualizar"

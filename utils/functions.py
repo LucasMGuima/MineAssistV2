@@ -86,6 +86,10 @@ def carregarCordenadas(save:str) -> list:
     """
     import glob
     cords = []
+
+    from pathlib import Path
+    Path("./saves").mkdir(parents=True, exist_ok=True)
+
     try:
         with open(f'./saves/{save}.csv', newline='\n') as csvfile:
             reader = csv.reader(csvfile, delimiter=',')
@@ -106,11 +110,12 @@ def carregarCordenadas(save:str) -> list:
         return cords
     except:
         lst_files = glob.glob('./saves/*.csv')
-        temp = max(lst_files, key=os.path.getatime)
-        temp = temp.replace('/', '\\').split('\\')[2]
-        arq_maisNovo = temp.replace('.csv', '')
-        return carregarCordenadas(arq_maisNovo)
-        
+        if len(lst_files) > 0:
+            temp = max(lst_files, key=os.path.getatime)
+            temp = temp.replace('/', '\\').split('\\')[2]
+            arq_maisNovo = temp.replace('.csv', '')
+            return carregarCordenadas(arq_maisNovo)
+        else: return False
 
 def listar_saves() -> list:
     from os import listdir
@@ -125,3 +130,6 @@ def criarNovoSave():
     nome = dpg.get_value(r.tags.novoSaveNome)
     file = open(f'./saves/{nome}.csv', newline='\n', mode="w")
     file.close()
+
+def remover_save(nome:str) -> None:
+    os.remove(f'./saves/{nome}.csv')

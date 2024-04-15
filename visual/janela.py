@@ -42,6 +42,12 @@ def __window_save() -> None:
 def __novo_save() -> None:
     dpg.configure_item(tg.novoSave, show=True, pos=dpg.get_mouse_pos())
 #Funcoes
+def __remover_save() -> None:
+    s_name = dpg.get_value(tg.save)
+    fun.remover_save(s_name)
+    lst = __listar_saves()
+    dpg.configure_item(tg.save, items=lst)
+
 def __atualizar_cords() -> None:
     for item in dpg.get_item_children(tg.coordWindow)[1]:
         #Limpa a tabela
@@ -124,7 +130,7 @@ def creat_window(_width: int, _height: int) -> None:
         with dpg.group(horizontal=True):
             dpg.add_button(label=lb.trocar, callback=__atualizar_cords)
             dpg.add_button(label=lb.novo, callback=__novo_save)
-            #dpg.add_button(label=lb.editar)
+            dpg.add_button(label=lb.remover, callback=__remover_save)
 
     #Novo save
     with dpg.window(label=lb.novoSave, tag=tg.novoSave, show=False, width=200):
